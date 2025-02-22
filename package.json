@@ -1,0 +1,24 @@
+{
+  "name": "circleciproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "experss": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
+    "babel-loader": "^9.2.1",
+    "nodemon": "^3.1.9",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  }
+}
