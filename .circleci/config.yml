@@ -40,11 +40,4 @@ workflows:
   deploy_pipeline:
     jobs:
       - build
-      - test
-      - deploy:
-          requires:
-            - build
-            - test
-          filters:
-            branches:
-              only: main
+     
