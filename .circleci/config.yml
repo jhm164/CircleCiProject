@@ -28,7 +28,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Debug - Check Files in Repo
-          command: ls -l 
+          command: ls -la
       - run:
           name: Build Docker Image
           command: docker build -t $DOCKER_USERNAME/myapp:${CIRCLE_SHA1} .
