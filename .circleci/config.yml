@@ -1,45 +1,36 @@
 version: 2.1
-
-executors:
-  node-executor:
-    docker:
-      - image: node:18
+orbs:
+  node: circleci/node@5.0.2
+  heroku: circleci/heroku@1.2.6
 
 jobs:
-  build:
-    executor: node-executor
+  build_and_test:
+    executor: node/default
     steps:
       - checkout
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
-          name: Install Dependencies
-          command: npm install
+          command: yarn test
+          name: Run tests
       - run:
-          name: Verify Express Installation
-          command: if [ ! -d "node_modules/express" ]; then echo "Express not found!"; exit 1; fi
-      - run:
-          name: Build Application
-          command: npm run build
+          command: yarn build
+          name: Build app
       - persist_to_workspace:
-          root: .
+          root: ~/project
           paths:
-            - dist/
+            - .
 
-  test:
-    executor: node-executor
+  deploy: # this can be any name you choose
+    executor: heroku/default
     steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Run Tests
-          command: npm test
+      - attach_workspace:
+          at: ~/project
+      - heroku/deploy-via-git:
+          force: true # force push when pushing to the heroku remote, see: https://devcenter.heroku.com/articles/git
 
 workflows:
-  version: 2
-  build_and_test:
+  test_my_app:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - build_and_test
+     
