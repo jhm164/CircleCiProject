@@ -10,8 +10,15 @@ jobs:
     executor: node-executor
     steps:
       - checkout
-      - run: npm install
-      - run: npm run build
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Verify Express Installation
+          command: if [ ! -d "node_modules/express" ]; then echo "Express not found!"; exit 1; fi
+      - run:
+          name: Build Application
+          command: npm run build
       - persist_to_workspace:
           root: .
           paths:
@@ -21,23 +28,18 @@ jobs:
     executor: node-executor
     steps:
       - checkout
-      - run: npm install
-      - run: npm test
-
-  deploy:
-    docker:
-      - image: circleci/python:3.9
-    steps:
-      - checkout
       - run:
-          name: Deploying to AWS
-          command: |
-            sudo apt update
-            aws s3 cp ./dist s3://my-app-bucket --recursive
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run Tests
+          command: npm test
 
 workflows:
   version: 2
-  deploy_pipeline:
+  build_and_test:
     jobs:
       - build
-      - test
+      - test:
+          requires:
+            - build
