@@ -1,0 +1,50 @@
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: circleci/node:18
+
+jobs:
+  build:
+    executor: node-executor
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist/
+
+  test:
+    executor: node-executor
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test
+
+  deploy:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Deploying to AWS
+          command: |
+            sudo apt update
+            aws s3 cp ./dist s3://my-app-bucket --recursive
+
+workflows:
+  version: 2
+  deploy_pipeline:
+    jobs:
+      - build
+      - test
+      - deploy:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: main
