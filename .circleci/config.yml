@@ -40,4 +40,4 @@ workflows:
   deploy_pipeline:
     jobs:
       - build
-     
+      - test
